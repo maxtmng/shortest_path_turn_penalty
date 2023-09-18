@@ -47,14 +47,6 @@ def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty=
         If contradictory paths are found due to negative weights.
     """
 
-    if source not in G:
-        raise nx.NodeNotFound(f"Source {source} not in G")
-
-    if isinstance(target, list) and not all(t in G for t in target):
-        raise nx.NodeNotFound("One or more targets not in G")
-    elif target not in G:
-        raise nx.NodeNotFound(f"Target {target} not in G")
-
     G_succ = G._adj  # For speed-up (and works for both directed and undirected graphs)
     weight = nx.algorithms.shortest_paths.weighted._weight_function(G, weight)
     push = heappush
