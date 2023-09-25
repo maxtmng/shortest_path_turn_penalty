@@ -1,5 +1,6 @@
 from heapq import heappop, heappush
 from itertools import count
+import networkx as nx
 def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty={}, next_node = None):
     """
     Uses Dijkstra's algorithm to find the shortest weighted paths to one or multiple targets with turn penalty.
