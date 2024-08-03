@@ -1,7 +1,9 @@
 from heapq import heappop, heappush
 from itertools import count
 import networkx as nx
-def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty={}, next_node = None):
+
+
+def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty={}, next_node=None):
     """
     Uses Dijkstra's algorithm to find the shortest weighted paths to one or multiple targets with turn penalty.
     This function is adapted from networkx.algorithms.shortest_paths.weighted._dijkstra_multisource.
@@ -57,13 +59,12 @@ def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty=
     target_list = [target] if not isinstance(target, list) else target
     reached_target = None
 
-    seen = {}
+    seen = {source: {}}
     c = count()
     fringe = []
 
-    seen[source] = {}
     if next_node is None:
-        for m,_ in G_succ[source].items():
+        for m, _ in G_succ[source].items():
             seen[source][m] = 0
             push(fringe, (0, next(c), source, m))
     else:
@@ -85,10 +86,10 @@ def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty=
 
         e = G[v][u]
         for m in G_succ[u]:
-            cost = weight(v, u, e) 
-            if (v,u,m) in penalty:
-                cost += penalty[v,u,m]
-            
+            cost = weight(v, u, e)
+            if (v, u, m) in penalty:
+                cost += penalty[v, u, m]
+
             if cost is None:
                 continue
             vu_dist = dist[v][u] + cost
