@@ -1,5 +1,6 @@
 import math
 
+
 def is_left_turn(bearing1, bearing2):
     relative_bearing = (bearing2 - bearing1) % 360
     return 150 < relative_bearing < 330
@@ -25,18 +26,24 @@ def calculate_bearing(G, u, v):
 
 def penalty_turns(G, left_turn_penalty=60, right_turn_penalty=30):
     """
-    Calculate left turn penalty for each node pair
-    :param G:
+    Calculate turn penalties for each node pair
+    :param G: NetworkX graph (directed or undirected)
     :param left_turn_penalty: in s
+    :param right_turn_penalty: in s
     :return: penalty dictionary
     """
-
-    penalty = {}  # penalty dictionary
+    penalty = {}
 
     for node in G.nodes():
-        # Get incoming and outgoing edges
-        in_edges = list(G.in_edges(node, data=True))
-        out_edges = list(G.out_edges(node, data=True))
+        # Handle both directed and undirected graphs
+        if hasattr(G, 'in_edges'):  # DiGraph
+            in_edges = list(G.in_edges(node, data=True))
+            out_edges = list(G.out_edges(node, data=True))
+        else:  # Undirected Graph
+            edges = list(G.edges(node, data=True))
+            # For undirected graphs, all edges can be both incoming and outgoing
+            in_edges = [(u, v, d) for u, v, d in edges if v == node]
+            out_edges = [(u, v, d) for u, v, d in edges if u == node]
 
         for u, _, data_in in in_edges:
             for _, v, data_out in out_edges:

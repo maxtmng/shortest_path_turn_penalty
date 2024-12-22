@@ -13,7 +13,7 @@ def shortest_path_turn_penalty(G, source, target, weight="travel_time", penalty=
 
     Parameters
     ----------
-    G : NetworkX graph
+    G : NetworkX graph (directed or undirected)
 
     source : non-empty iterable of nodes
         Starting nodes for paths. If this is just an iterable containing
