@@ -1,3 +1,4 @@
+import math
 import pytest
 import osmnx as ox
 import os
@@ -70,6 +71,34 @@ def test_shortest_path_turn_penalty_undirected(undirected_graph):
     for i in range(len(result) - 1):
         assert undirected_graph.has_edge(result[i], result[i + 1]), \
             f"Nodes {result[i]} and {result[i + 1]} are not connected in the graph"
+
+
+def test_penalty_turns_undirected_nonempty(undirected_graph):
+    """Verify that penalty_turns produces a non-empty penalty dict for undirected graphs"""
+    penalty = penalty_turns(undirected_graph)
+    assert len(penalty) > 0, "penalty_turns should produce penalties for undirected graphs"
+
+    for (u, node, v), cost in penalty.items():
+        assert undirected_graph.has_node(u)
+        assert undirected_graph.has_node(node)
+        assert undirected_graph.has_node(v)
+        assert undirected_graph.has_edge(u, node)
+        assert undirected_graph.has_edge(node, v)
+        assert u != v, "U-turns should be excluded from penalties"
+        assert cost > 0
+
+
+def test_penalties_affect_undirected_path(undirected_graph):
+    """Verify that turn penalties actually change the shortest path for undirected graphs"""
+    path_no_penalty = shortest_path_turn_penalty(undirected_graph, 271169073, 740243448,
+                                                  weight="travel_time", penalty={})
+
+    penalty = penalty_turns(undirected_graph)
+    path_with_penalty = shortest_path_turn_penalty(undirected_graph, 271169073, 740243448,
+                                                    weight="travel_time", penalty=penalty)
+
+    assert path_no_penalty != path_with_penalty, \
+        "Turn penalties should produce a different path than no penalties"
 
 
 if __name__ == "__main__":

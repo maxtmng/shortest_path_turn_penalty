@@ -5,7 +5,9 @@ This project implements a modified Dijkstra's algorithm to find the shortest wei
 ## Features
 
 - Calculates shortest paths with consideration for turn penalties
+- Supports both directed and undirected graphs
 - Supports both left and right turn penalties
+- Supports geographic (lat/lon) and projected (e.g. UTM) coordinate systems
 - Uses OpenStreetMap data for real-world road networks
 - Includes utility functions for calculating bearings and identifying turn types
 
@@ -30,12 +32,11 @@ pip install networkx osmnx pytest
 The main function `shortest_path_turn_penalty` is located in `shortest_path_turn_penalty.py`. Here's a basic example of how to use it:
 
 ```python
-import networkx as nx
 from shortest_path_util import penalty_turns
 from shortest_path_turn_penalty import shortest_path_turn_penalty
 
-# Load or create your graph
-G = nx.Graph()  # Replace this with your graph loading logic
+# Load or create your graph (directed or undirected)
+# G = ...
 
 # Calculate turn penalties
 penalty = penalty_turns(G)
@@ -43,6 +44,18 @@ penalty = penalty_turns(G)
 # Find the shortest path
 path = shortest_path_turn_penalty(G, source_node, target_node, weight="travel_time", penalty=penalty)
 ```
+
+### Projected coordinates (e.g. UTM)
+
+By default, `calculate_bearing` and `penalty_turns` assume geographic coordinates (lat/lon in degrees). If your graph uses a projected CRS such as UTM, pass `projected=True`:
+
+```python
+penalty = penalty_turns(G, projected=True)
+```
+
+### Directed vs. undirected graphs
+
+Both directed and undirected graphs are supported. For directed graphs, `penalty_turns` uses the pre-computed `bearing` edge attribute (e.g. from `osmnx.add_edge_bearings`). For undirected graphs, bearings are computed dynamically from node coordinates.
 
 ## Testing
 
